@@ -61,41 +61,6 @@ def FReLU_TRAIN (x): # Trainable FRELU # Initializa=-0.398
 def FTS (x): # FTS [T=-0.20 (Fix)] 
   return (tf.nn.relu(x)*tf.sigmoid(x))-0.20 # trainable FTS
 
-def FTS_train (x): # FTS [T=-0.20 (Train)] 
-  T_train=tf.Variable(initial_value=-0.20,trainable=True,name='threshold')
-  activation=(tf.nn.relu(x)*tf.sigmoid(x))+T_train
-  return activation
-
-def FTS1 (x): # FTS [T=-0.20 (Train), a=0.342061 (Train)] 
-  T1=tf.Variable(initial_value=-0.20,trainable=True,name='threshold1')
-  a1=tf.Variable(initial_value=0.34206097,trainable=True,name='alpha1')
-  activation=(tf.nn.relu(x+a1)*tf.sigmoid(x+a1))+T1 
-  return activation
-
-def FTS2 (x): # FTS [T=-0.20 (Train), a=0.0 (Train)] 
-  T2=tf.Variable(initial_value=-0.20,trainable=True,name='threshold2')
-  a2=tf.Variable(initial_value=0.00,trainable=True,name='alpha2')
-  activation=(tf.nn.relu(x+a2)*tf.sigmoid(x+a2))+T2
-  return activation
-
-def FTS3 (x): # FTS [T=-0.20 (Fix), a=0.342061 (Train)] 
-  T3=-0.20
-  a3=tf.Variable(initial_value=0.34206097,trainable=True,name='alpha3')
-  activation=(tf.nn.relu(x+a3)*tf.sigmoid(x+a3))+T3
-  return activation
-
-def FTS4 (x): # FTS [T=-0.20 (Fix), a=0.0 (Train)] 
-  T4=-0.20
-  a4=tf.Variable(initial_value=0.0,trainable=True,name='alpha4')
-  activation=(tf.nn.relu(x+a4)*tf.sigmoid(x+a4))+T4
-  return activation
-
-def FTS5 (x): # FTS [T=0.0 (Train), a=0.0 (Train)] 
-  T5=tf.Variable(initial_value=0.00,trainable=True,name='threshold3')
-  a5=tf.Variable(initial_value=0.00,trainable=True,name='alpha5')
-  activation=(tf.nn.relu(x+a5)*tf.sigmoid(x+a5))+T5
-  return activation
-
 functions={
     'ReLU':ReLU,
     'Swish':Swish,
@@ -107,14 +72,7 @@ functions={
     'ELU':ELU,
     'FReLU':FReLU,
     'FReLU_TRAIN':FReLU_TRAIN,
-    'FTS':FTS,
-    'FTS_train':FTS_train,
-    'FTS1':FTS1,
-    'FTS2':FTS2,
-    'FTS3':FTS3,
-    'FTS4':FTS4,
-    'FTS5':FTS5,
-    'PReLU':PReLU
+    'FTS':FTS
 }
 
 
@@ -215,8 +173,8 @@ def evaluate(X_data, y_data):
         total_accuracy += (accuracy * len(batch_x))
     return total_accuracy / num_examples,loss
   
-#'ReLU','Swish','Tanh','LReLU_01','LReLU_25','PReLU','Softplus','ELU','FReLU','FReLU_TRAIN','FTS','FTS_train','FTS1','FTS2','FTS3','FTS4','FTS5'
-for func in ['LReLU_01','LReLU_25','PReLU','Softplus','ELU','FReLU','FReLU_TRAIN','FTS_train','FTS1','FTS2','FTS3','FTS4']:
+
+for func in ['ReLU']:
   tf.reset_default_graph()
   x,y,keep_prob=get_inputs()
   training_operation, loss_operation, accuracy_operation, logits = NN(x,y,keep_prob,func)
@@ -258,13 +216,11 @@ for func in ['LReLU_01','LReLU_25','PReLU','Softplus','ELU','FReLU','FReLU_TRAIN
           y_test=sess.run(logits,feed_dict={x:test_dataset,keep_prob:1.0})
           true_class = np.argmax(test_labels,1)
           predicted_class=np.argmax(y_test,1)
-          #cm=confusion_matrix(true_class, predicted_class)
-          #print(cm)
-          #print("\n")
-          #print(classification_report(true_class, predicted_class))
-          
-          #Source: https://scikit-learn.org/stable/modules/model_evaluation.html
-          
+          cm=confusion_matrix(true_class, predicted_class)
+          print(cm)
+          print("\n")
+          print(classification_report(true_class, predicted_class))
+       
           # ROC & AUc
           lb = LabelBinarizer()
           lb.fit(predicted_class)
