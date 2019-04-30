@@ -3,12 +3,10 @@ import numpy as np
 import tensorflow as tf
 import pickle
 from tensorflow.contrib.layers import flatten
-from sklearn import metrics
-from sklearn.metrics import confusion_matrix
-from sklearn.metrics import classification_report
+from sklearn.metrics import confusion_matrix, classification_report, roc_curve, auc, roc_auc_score 
 from sklearn.naive_bayes import MultinomialNB as nb
-from sklearn.metrics import roc_curve, auc, roc_auc_score
 from sklearn.preprocessing import LabelEncoder, LabelBinarizer
+
 
 # load file
 pickle_file = open( "mnist_a2j.pickle", "rb" )
